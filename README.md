@@ -7,10 +7,13 @@ Hacking
 -------
 To start playing around with this app you must follow these steps:
 
- 1. Create a Twilio account and purchase a number.
+ 1. Create a Twilio account and purchase a number, take note of your account sid, auth otken and phone number.
  1. Run `npm install`
  1. Set either `LOCALTUNNEL` or `NGROK` environment variables to your favorite subdomain. From experience ngrok seems to need a paid account to work, but is slightly more reliable that.
  1. Run `npm start` and use the URL given in the output in your browser.
+ 1. Create an account and log in.
+ 1. After that, set your browser to `/settings` and put in your Twilio info. Clunky, I know..
+ 1. You are ready to make calls and send texts!!
 
 > **Browser support**
 > 
