@@ -1,0 +1,29 @@
+extends layout
+
+append head
+  style body { padding 5rem; }
+
+block content
+  h1= title
+  .jumbotron
+    if notice
+      - var classes = ['alert', 'alert-' + notice.type]
+      div(class=classes, role='alert')= notice.message
+    form.login(action='/settings', method='post' data-toggle='validator')
+      fieldset.form-group
+        input.form-control(type="text", name='account_sid' placeholder="AccountSID", value=account_sid || '', required)
+        .help-block.with-errors
+
+      fieldset.form-group
+        input.form-control(type="text", name='auth_token' placeholder="AuthToken", value=auth_token || '' required)
+        .help-block.with-errors
+
+      fieldset.form-group
+        input.form-control(type="text", name='phone_number' placeholder="Phone Number", value=phone_number || '' required)
+        .help-block.with-errors
+
+      fieldset.buttons
+        button.btn.btn-primary(type='submit') Save
+
+block tailend
+    script(type='text/javascript' src='/bower/bootstrap-validator/dist/validator.min.js')

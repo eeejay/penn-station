@@ -1,0 +1,17 @@
+extends gaia
+
+block content
+  gaia-header
+    h1 Recents
+  gaia-fast-list#recents-list
+    template
+      li
+        a(class='${direction}', href="#", data-number="${number}")
+          div(style='pointer-events: none;')
+            h3 ${contact}
+            p
+              span ${phonetype}
+              span ${formatted_time}
+
+block tailend
+  script(type='text/javascript' src='/js/recents.js')

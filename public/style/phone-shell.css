@@ -1,0 +1,112 @@
+body {
+  background-color: #333;
+}
+
+#appcontainer {
+  width: 320px;
+  height: 480px;
+  border: 2px solid #000;
+  margin: 60px auto;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+iframe#app {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+button#menubutton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  border: medium none;
+  font-size: 20px;
+  width: 32px;
+  height: 32px;
+  color: #fff;
+}
+
+#sidebar {
+  height: 100%;
+  position: absolute;
+  width: 75%;
+  background-color: #333;
+  color: rgb(255, 255, 255);
+  padding: 12px;
+  left: 0px;
+  transform: translateX(-100%);
+  visibility: hidden;
+  transition: 0.5s transform, 0.5s visibility;
+}
+
+#sidebar:after {
+  content: '';
+  height: calc(100% + 20px);
+  position: absolute;
+  width: 200%;
+  top: -10px;
+  left: 100%;
+  box-shadow: 5px -1px 10px rgba(0, 0, 0, 0.79) inset;
+}
+
+.showmenu #sidebar {
+  visibility: visible;
+  transform: none;
+}
+
+#sidebar ul {
+  list-style: none;
+}
+
+#sidebar ul a {
+  text-decoration: none;
+  color: #fff;
+}
+
+#buttons {
+  position: relative;
+  margin: auto;
+  width: 320px;
+  margin: auto;
+  height: 3rem;
+}
+
+#buttons button {
+  width: 100%;
+  margin: auto;
+  display: block;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  font-weight: 700;
+  color: rgb(255, 255, 255);
+  text-transform: uppercase;
+  font-size: 1.5rem;
+  line-height: 2;
+  visibility: hidden;
+  opacity: 0;
+  transition: 0.5s opacity, 0.5s visibility;
+}
+
+#hangup {
+  border: 2px solid rgb(69, 0, 0);
+  background: rgb(129, 0, 0) none repeat scroll 0% 0%;
+}
+
+#accept {
+  border: 2px solid rgb(0, 69, 0);
+  background: rgb(0, 129, 0) none repeat scroll 0% 0%;
+}
+
+.inbound #accept, .incall #hangup {
+  opacity: 1;
+  visibility: visible;
+}

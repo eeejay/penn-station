@@ -1,0 +1,18 @@
+{
+  "name": "Web Phone",
+  "description": "A Web Phone?",
+  "type": "privileged",
+  "launch_path": "./",
+  "role": "system",
+  "developer": {
+    "name": "Eitan Isaacson",
+    "url": "https://github.com/eeejay/"
+  },
+  "orientation": "portrait",
+  "permissions": {
+    "moz-audio-channel-telephony": {}
+  },
+  "icons": {
+    "128": "/icons/icon_128.png"
+  }
+}

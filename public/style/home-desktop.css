@@ -1,0 +1,103 @@
+@media (min-width: 960px) {
+  body {
+    background-color: #333;
+  }
+
+  #tabs {
+    display: none;
+  }
+
+  #panels {
+    display: flex;
+    justify-content: space-around;
+    padding: 2.5rem 1rem 5rem 1rem;
+    overflow: hidden;
+    position: relative;
+  }
+
+  #panels .panel {
+    position: relative;
+    visibility: visible;
+    /* margin: 2.5rem; */
+    background-color: #fff;
+  }
+
+  #panels .column {
+    height: 100%;
+    min-width: 320px;
+    width: initial;
+  }
+
+  #panels #recents-dialer {
+    width: 320px;
+  }
+
+  #recents {
+    border-left: solid 1px var(--border-color, #e7e7e7);
+  }
+
+  #dialer.panel {
+    position: fixed;
+    width: calc(320px + 5rem + 2rem);
+    height: 100%;
+    background-color: transparent;
+    pointer-events: none;
+    overflow: hidden;
+    left: 0;
+  }
+
+  #dialer-container {
+    height: 435px;
+    width: 320px;
+    position: absolute;
+    bottom: 0;
+    left: 5rem;
+    pointer-events: auto;
+    background-color: #fff;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    transform: translateY(100%);
+    visibility: hidden;
+    transition: .25s transform, .25s visibility;
+    overflow: hidden;
+    border-radius: 1rem 1rem 0 0;
+  }
+
+  body[data-tab="dialer"] #dialer #dialer-container {
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  #dialer-controls {
+    display: block;
+  }
+
+  body[data-tab="dialer"] #dialer a#hide-dialer {
+    display: block;
+  }
+
+  body:not([data-tab="dialer"]) #dialer a#show-dialer {
+    display: block;
+  }
+
+  #panels #contacts {
+    display: none;
+  }
+
+  #messages {
+    flex-grow: 1;
+  }
+
+  #callscreen {
+    background-color: rgba(51, 51, 51, 0.85);
+  }
+
+  #callscreen .buttonbar {
+    top: 50%;
+    width: 320px;
+    height: 6rem;
+    border-radius: 1rem;
+    transform: translate(-50%);
+    left: 50%;
+    background-color: #333;
+  }
+}

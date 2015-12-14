@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  h1= title
+    if notice
+      - var classes = ['alert', 'alert-' + notice.type]
+      div(class=classes, role='alert')= notice.message
+    form.login(action='/auth/' + action, method='post' data-toggle='validator')
+      input#username.form-control(type="email", name='username' placeholder="Username" required)
+      .help-block.with-errors
+
+      input#password.form-control(type="password", name='password' placeholder="Password" required)
+      .help-block.with-errors
+
+      if action == 'register'
+        input#password-confirm.form-control(type="password", placeholder="Confirm", data-match="#password", data-match-error="Password doesn't match" required)
+        .help-block.with-errors
+
+      button.btn.btn-primary(type='submit') Sign in

@@ -1,0 +1,43 @@
+extends gaia
+
+append head
+  link(rel='stylesheet', href='/style/messages.css')
+  link(rel='stylesheet', href='/style/messages-desktop.css')
+  script(type='text/javascript' src='/bower/libphonenumber/dist/libphonenumber.js')
+  script(type='text/javascript' src='/js/sounds.js')
+
+block content
+  #views
+    section.view.active#inbox
+      gaia-header
+        h1 Messages
+        a(aria-label="Compose new", data-icon="compose", data-l10n-id="ignore")
+      gaia-fast-list#threads-list
+        template
+          li(class="gfl-item ${status}")
+            a.conversation-link(href="#", data-thread="${thread_id}")
+              div
+                h3 ${contact}
+                p
+                  span.time ${last_message_time}
+                  span.body ${last_message_body}
+    section.view#conversation(data-thread-id='')
+      .twocolumns
+        gaia-header()
+          h1 Conversation
+          a(aria-label="Call", data-icon="call", data-l10n-id="call")
+      .onecolumn
+        gaia-header(action='back')
+          h1 Conversation
+          a(aria-label="Call", data-icon="call", data-l10n-id="call")
+      .to
+        label(for="toinput") To:
+        input#toinput(type='text')
+      .message-list
+        ul
+      .compose
+        input(placeholder="Message")
+        button(aria-label="Send", data-icon="send", data-l10n-id="ignore")
+
+block tailend
+  script(type='text/javascript' src='/js/messages.js')

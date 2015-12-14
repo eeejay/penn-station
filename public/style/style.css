@@ -1,0 +1,433 @@
+html {
+  font-size: 10px;
+}
+
+body {
+  padding: 5rem;
+}
+
+body.gaia-view {
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  height: 5rem;
+  background-color: #27c8c2;
+  color: #fff;
+  font-family: 'fira sans';
+}
+
+header h1 {
+  padding: 0;
+  margin: 0;
+  line-height: 50px;
+  font-weight: 300;
+  font-style: italic;
+  font-size: 2.3rem;
+  text-align: center;
+}
+
+#panels {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+#tabs {
+  height: calc(4.5rem + 0.1rem);
+  width: 100%;
+  border-top: 0.1rem solid #e7e7e7;
+  display: flex;
+}
+
+.tab {
+  display: flex;
+  height: 4.5rem;
+  flex-grow: 1;
+  background-repeat: no-repeat;
+  background-position: center top;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+}
+
+.tab::before {
+  color: #5f5f5f;
+}
+
+body[data-tab="contacts"] #contacts-tab.tab::before,
+body[data-tab="recents"] #recents-tab.tab::before,
+body[data-tab="dialer"] #dialer-tab.tab::before,
+body[data-tab="messages"] #messages-tab.tab::before {
+  color: #00CAF2;
+}
+
+body[data-tab="contacts"] #contacts-tab:after,
+body[data-tab="recents"] #recents-tab:after,
+body[data-tab="dialer"] #dialer-tab:after,
+body[data-tab="messages"] #messages-tab:after  {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  content: "";
+  border-bottom: 0.3rem solid #00aacc;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+}
+
+@keyframes pulse {
+  0% {
+    color: rgba(217, 50, 0, 0.25);
+  }
+  50% {
+    color: rgba(217, 126, 0, 1);
+  }
+  100% {
+    color: rgba(217, 50, 0, 0.25);
+  }
+}
+
+body:not([data-tab="dialer"]).incall #dialer-tab::before {
+  animation: pulse 3s infinite;
+  animation-timing-function: ease;
+}
+
+.tab span {
+  display: none;
+}
+
+.panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  border: none;
+}
+
+body[data-tab="contacts"] #contacts,
+body[data-tab="recents"] #recents,
+body[data-tab="dialer"] #dialer,
+body[data-tab="messages"] #messages {
+  visibility: visible;
+}
+
+#top {
+  height: 25%;
+  position: relative;
+}
+
+#top > * {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#call-info {
+  background-color: rgba(255,255,255,0.5);
+  color: #000;
+  display: none;
+}
+
+#number-display {
+  padding: 0;
+  display: flex;
+  background-color: #27c8c2;
+}
+
+.incall #number-display {
+  display: none;
+}
+
+.incall #call-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 2rem;;
+  font-size: 4rem;
+}
+
+#call-info h2:empty {
+  display: none;
+}
+
+h1 {
+  font-size: 4rem;
+  line-height: 4rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+}
+
+#number-display #number {
+  flex-grow: 2;
+  min-width: 0;
+  font-size: 4rem;
+  background-color: #27c8c2;
+  border: none;
+  margin-left: 12px;
+  color: #fff;
+}
+
+button#erase {
+  display: flex;
+  width: 10rem;
+  font-size: 4rem;
+  color: rgba(255, 255, 255, 0.75);
+  background-color: transparent;
+  border: none;
+  visibility: hidden;
+  padding: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+button#erase::before {
+  font-size: 4rem;
+}
+
+body[data-tab="dialer"] input#number[data-has-value='true'] + button#erase {
+  visibility: visible;
+}
+
+#midsection {
+  height: calc(75% - 6rem);
+  position: relative;
+}
+
+#midsection > * {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#keypad {
+  margin: 0 1.2rem;
+  display: flex;
+  width: calc(100% - 24px);
+  table-layout: fixed;
+  height: 100%;
+  flex-direction: column;
+  align-content: stretch;
+}
+
+body.incall #keypad {
+  display: none;
+}
+
+.keypad-row {
+  display: flex;
+  height: 100%;
+}
+
+#call-status {
+  display: none;
+  padding: 2rem;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0));
+}
+
+#call-status h3 {
+  font-size: 3rem;
+  line-height: 3rem;
+  color: #fff;
+  text-shadow: 1px 1px rgba(0,0,0,0.3);
+  display: flex;
+  justify-content: space-between;
+}
+
+#call-status h3::after {
+  font-family: "gaia-icons";
+  margin-inline-start: 1rem;
+}
+
+.inbound #call-status h3::after {
+  content: 'call-incoming';
+}
+
+.outbound #call-status h3::after {
+  content: 'call-outgoing';
+}
+
+body.incall #call-status {
+  display: flex;
+}
+
+.key {
+  width: 100%;
+  margin: 0.25rem 0;
+}
+
+.key > span {
+  font-size: 5rem;
+  font-family: serif;
+  pointer-events: none;
+  margin-left: 2.5rem;
+  line-height: normal;
+}
+
+.key > em {
+  font-weight: 300;
+  font-size: 1.5rem;
+  color: #038282;
+  font-style: normal;
+  width: 4.5rem;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.buttonbar {
+  display: flex;
+  width: 100%
+}
+
+#callbar {
+  height: 6rem;
+}
+
+#callbar.buttonbar button {
+  flex-grow: 1;
+  margin: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 2rem;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  align-content: center;
+  width: 100%;
+  color: #fff;
+  display: none;
+}
+
+#callbar button::before {
+  font-size: 4rem;
+  line-height: 4rem;
+}
+
+button#call {
+  background-color: #00adad;
+}
+
+button#accept {
+  background-color: #00adad;
+}
+
+button#reject, button#hangup {
+  background-color: #e00000;
+}
+
+#callbar button.small {
+  background-color: rgba(0, 0, 0, 0.2);
+  width: 6rem;
+  border-radius: 6rem;
+  flex-grow: 0;
+}
+
+#callbar button.small::before {
+  font-size: 3rem;
+}
+
+.incall #callbar {
+  background-color: rgba(255,255,255,0.5);
+}
+
+/* button logic */
+
+body:not(.incall) #callbar button.show-nocall {
+  display: block;
+}
+
+body.incall:not(.inbound) #callbar button.show-incall {
+  display: block;
+}
+
+body.inbound #callbar button.show-inbound {
+  display: block;
+}
+
+body.incall #keypad {
+  visibility: hidden;
+}
+
+body.incall #dialer-container {
+  background-color: #f27700;
+}
+
+#recents-list p {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+#recents-list a {
+  display: flex;
+}
+
+#recents-list a > div {
+    width: 100%
+}
+
+#recents-list a.inbound::before {
+  font-family: "gaia-icons";
+  content: 'call-incoming';
+  font-size: 3rem;
+  margin-inline-end: 0.5rem;
+  line-height: 3rem;
+  color: #575757;
+}
+
+#recents-list a.outbound::before {
+  font-family: "gaia-icons";
+  content: 'call-outgoing';
+  font-size: 3rem;
+  margin-inline-end: 0.5rem;
+  line-height: 3rem;
+  color: #575757;
+}
+
+#dialer-container {
+  height: 100%;
+}
+
+
+#dialer-controls {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 5rem;
+  height: 5rem;
+  pointer-events: auto;
+}
+
+#dialer-controls > a {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  font-size: 5rem;
+  line-height: 5rem;
+  text-align: center;
+  color: var(--highlight-color);
+}
+
+body:not([data-tab="dialer"]).incall a#show-dialer {
+  animation: pulse 3s infinite;
+  animation-timing-function: ease;
+}

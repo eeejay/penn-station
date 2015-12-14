@@ -1,0 +1,83 @@
+@media (min-width: 640px) {
+  #views {
+    display: flex;
+  }
+
+  #conversation, #inbox {
+    transform: none;
+    visibility: visible;
+    z-index: initial;
+  }
+
+  .view {
+    position: relative;
+    width: auto;
+  }
+
+  #inbox {
+    width: 320px;
+  }
+
+  #conversation {
+    flex-grow: 1;
+  }
+
+  .message-list {
+    box-shadow: 1px 0px 1px rgba(0, 0, 0, 0.15) inset;
+  }
+
+  .onecolumn {
+    display: none;
+  }
+
+  .twocolumns {
+    display: block;
+  }
+
+   #threads-list li {
+    z-index: 101 !important;
+   }
+
+   #threads-list li.selected {
+    background-color: var(--header-background) !important;
+    border-right: 20px solid var(--header-background);
+    border-left: 20px solid var(--header-background);
+    color: var(--header-color) !important;
+    margin: 0 -10px 0 -20px;
+    border-radius: 0px 30px 30px 0px;
+  }
+
+  .message-list li {
+    position: relative;
+    margin-left: 75px;
+    margin-top: 25px;
+  }
+
+  .message-list li.outbound {
+    margin-right: 75px;
+  }
+
+  .message-list li::before {
+    display: block;
+    position: absolute;
+    left: -70px;
+    background-color: rgba(0, 0, 0, 0.21);
+    width: 60px;
+    height: 60px;
+    font-size: 60px;
+    line-height: 60px;
+    border-radius: 30px;
+    text-align: center;
+    top: -15px;
+  }
+
+  .message-list li.outbound::before {
+    right: -70px;
+    left: initial;
+    color: #555;
+  }
+
+  .compose {
+    padding: 1rem;
+  }
+}

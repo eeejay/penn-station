@@ -1,0 +1,89 @@
+extends gaia
+
+append head
+  link(rel='stylesheet', href='/style/home-desktop.css')
+  script(type='text/javascript' src='/bower/libphonenumber/dist/libphonenumber.js')
+  script(type='text/javascript' src='/bower/dtmf/dist/dtmf.min.js')
+
+  script(type='text/javascript' src='//static.twilio.com/libs/twiliojs/1.2/twilio.min.js')
+  script(type='text/javascript' src='/twilio/caps.js')
+  script(type='text/javascript' src='/js/telephony.js')
+
+block content
+  #panels(aria-hidden='false')
+    iframe#contacts.panel.column(src='/contacts')
+    iframe#messages.panel.column(src='/messages')
+    iframe#recents.panel.column(src='/recents')
+    section#dialer.panel.column
+      #dialer-container
+        #top
+          #call-info
+            h1 Incoming
+            h2
+          #number-display
+            input#number(type='text', readonly='readonly', data-value='')
+            button#erase(aria-label='Delete', data-icon="clear-input", data-l10n-id="ignore")
+        #midsection
+          #call-status
+            h3 Incoming..
+          #keypad
+            .keypad-row
+              .key(role='key', data-value='1')
+                span 1
+              .key(role='key', data-value='2')
+                span 2
+                em abc
+              .key(role='key', data-value='3')
+                span 3
+                em def
+            .keypad-row
+              .key(role='key', data-value='4')
+                span 4
+                em ghi
+              .key(role='key', data-value='5')
+                span 5
+                em jkl
+              .key(role='key', data-value='6')
+                span 6
+                em mno
+            .keypad-row
+              .key(role='key', data-value='7')
+                span 7
+                em pqrs
+              .key(role='key', data-value='8')
+                span 8
+                em tuv
+              .key(role='key', data-value='9')
+                span 9
+                em wxyz
+            .keypad-row
+              .key(role='key', data-value='*')
+                span *
+                em ’
+              .key(role='key', data-value='0')
+                span 0
+                em +
+              .key(role='key', data-value='#')
+                span #
+        #callbar.buttonbar
+          button#mute.show-incall.small(aria-label='Mute', data-icon="mute", data-l10n-id="mute")
+          button#call.show-nocall(aria-label='Call', data-icon="call", data-l10n-id="ignore")
+          button#reject.show-inbound(aria-label='Reject', data-icon="call-hang-up", data-l10n-id="ignore")
+          button#hangup.show-incall(aria-label='Hang up', data-icon="call-hang-up", data-l10n-id="ignore")
+          button#accept.show-inbound(aria-label='Accept', data-icon="call", data-l10n-id="ignore")
+          button#show-dialpad.show-incall.small(aria-label='Show dialpad', data-icon="dialpad", data-l10n-id="show-dialpad")
+      #dialer-controls
+        a#show-dialer(href='#dialer', aria-label="Show keypad", data-icon="dialpad", data-l10n-id="Show keypad")
+        a#hide-dialer(href='#messages', aria-label="Hide keypad", data-icon="dismiss-keyboard", data-l10n-id="Hide keypad")
+  #tabs
+    a#messages-tab.tab(href='#messages', aria-label="Messages", data-icon="messages", data-l10n-id="ignore")
+      span Messages
+    a#recents-tab.tab(href='#recents', aria-label="Recent calls", data-icon="recent-calls", data-l10n-id="ignore")
+      span Recent calls
+    a#contacts-tab.tab(href='#contacts', aria-label="Contacts", data-icon="contacts", data-l10n-id="ignore")
+      span Contacts
+    a#dialer-tab.tab(href='#dialer', aria-label="Keypad", data-icon="dialpad", data-l10n-id="Keypad")
+      span Keypad
+
+block tailend
+  script(type='text/javascript' src='/js/dialer.js')

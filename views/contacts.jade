@@ -1,0 +1,15 @@
+extends gaia
+
+block content
+  gaia-header
+    h1 Contacts
+  gaia-fast-list#contacts-list
+    template
+      li
+        .image.round
+          img
+        h3 ${title}
+        p ${phone}
+
+block tailend
+  script(type='text/javascript' src='/js/contacts.js')

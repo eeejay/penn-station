@@ -1,0 +1,23 @@
+extends layout
+
+block bodyclass
+  -var bodyclass = 'theme-communications gaia-view';
+
+append head
+  link(rel='stylesheet', href='/bower/gaia-icons/gaia-icons.css')
+  link(rel='stylesheet', href='/bower/gaia-theme/gaia-theme.css')
+  link(rel='stylesheet', href='/bower/gaia-fonts/style.css')
+  link(rel='stylesheet', href='/bower/base/base.css')
+
+  script(type='text/javascript' src='/bower/gaia-component/gaia-component.js')
+  script(type='text/javascript' src='/bower/font-fit/font-fit.js')
+  script(type='text/javascript' src='/bower/gaia-header/gaia-header.js')
+  script(type='text/javascript' src='/bower/gaia-sub-header/gaia-sub-header.js')
+  script(type='text/javascript' src='/bower/dom-scheduler/lib/dom-scheduler.js')
+  script(type='text/javascript' src='/bower/poplar/poplar.js')
+  script(type='text/javascript' src='/bower/fast-list/fast-list.js')
+  script(type='text/javascript' src='/bower/gaia-fast-list/gaia-fast-list.js')
+  script(type='text/javascript' src='/bower/bridge/bridge.min.js')
+
+block content
+  p hi

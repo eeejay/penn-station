@@ -1,0 +1,39 @@
+#contacts .name {
+
+}
+
+#contacts .name .first {
+
+}
+
+#contacts .name .last {
+  font-weight: 700;
+}
+
+#contacts .phonenumber {
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+#contacts .portrait {
+  float: right;
+}
+
+#contacts .portrait img {
+  width: 5rem;
+  height: auto;
+  border-radius: 2.5rem;
+}
+
+/* messages MOVE ME */
+
+.message {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: calc(100% - 5rem);
+}
+
+.unread .message {
+  font-weight: 700;
+}

@@ -1,0 +1,35 @@
+{
+  "name": "hosted-phone",
+  "description": "",
+  "main": "",
+  "authors": [
+    "Eitan Isaacson <eitan@monotonous.org>"
+  ],
+  "license": "MIT",
+  "moduleType": [],
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "libphonenumber": "~0.9.3",
+    "dtmf": "eeejay/dtmf",
+    "gaia-header": "gaia-components/gaia-header#~0.8.4",
+    "gaia-icons": "gaia-components/gaia-icons#~0.9.2",
+    "gaia-theme": "gaia-components/gaia-theme#~0.5.1",
+    "gaia-fonts": "gaia-components/gaia-fonts#~0.2.1",
+    "base": "gaia-components/base",
+    "poplar": "wilsonpage/poplar#1.0.0",
+    "gaia-fast-list": "gaia-components/gaia-fast-list#v0.3.0",
+    "bridge": "fxos-components/bridge#~1.1.0"
+  },
+  "resolutions": {
+    "gaia-component": "~0.4.0",
+    "gaia-icons": "~0.9.2"
+  }
+}
