@@ -13,7 +13,6 @@ self.addEventListener('push', (e) => {
 });
 
 self.addEventListener('notificationclick', function(event) {
-  console.log('On notification click: ', event.notification.tag);
   event.notification.close();
 
   event.waitUntil(clients.matchAll({ type: "window" }).then(function(clientList) {
