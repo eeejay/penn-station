@@ -6,13 +6,13 @@ var db = require('../../db');
 var router = express.Router();
 
 router.get("/caps.js", authUtil.ensureAuthenticated, function(req, res) {
-  console.log('CAPS', req.headers.origin);
+  var origin = req.protocol + '://' + req.get('host');
   res.type('js');
   if (req.user.twilio_account_sid && req.user.twilio_auth_token && req.user.twilio_phone_number) {
     var client = twilio(req.user.twilio_account_sid, req.user.twilio_auth_token);
 
     getPhoneNumber(client, req.user.twilio_phone_number).then(number_details => {
-      getOrCreateApplication(client, req.headers.origin).then(app => {
+      getOrCreateApplication(client, origin).then(app => {
         configurePhoneNumber(client, number_details, app).then(() => {
           var capability = new twilio.Capability(
             req.user.twilio_account_sid, req.user.twilio_auth_token);
@@ -33,22 +33,40 @@ router.get("/caps.js", authUtil.ensureAuthenticated, function(req, res) {
 function getOrCreateApplication(client, origin) {
   var voiceUrl = origin + '/twilio/voice-twiml';
   var smsUrl = origin + '/messages/callback-twiml';
+  var friendlyName = "Hosted phone (" + origin + ")";
   return new Promise((resolve, reject) => {
-    client.applications.list((err, result) => {
+    client.applications.list({ friendlyName: friendlyName }, (err, result) => {
       if (err) {
         reject(err);
       } else {
-        var app =
-          result.applications.find(a => (a.voiceUrl == voiceUrl && a.smsUrl == smsUrl));
+        var app = result.applications[0];
         if (app) {
-          resolve(app);
+          if (app.voiceUrl == voiceUrl && app.smsUrl == smsUrl) {
+            resolve(app);
+          } else {
+            client.applications(app.sid).update({
+              voiceUrl: voiceUrl,
+              smsUrl: smsUrl
+            }, (err, new_app) => {
+              console.log('updated');
+              if (err) {
+                reject(err);
+              } else {
+                resolve(new_app);
+              }
+            });
+          }
         } else {
           client.applications.create({
-            friendlyName: "Hosted phone (" + origin + ")",
+            friendlyName: friendlyName,
             voiceUrl: voiceUrl,
             smsUrl: smsUrl
           }, function(err, new_app) {
-            resolve(new_app);
+            if (err) {
+              reject(err.message);
+            } else {
+              resolve(new_app);
+            }
           });
         }
       }
