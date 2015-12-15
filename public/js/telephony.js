@@ -5,6 +5,14 @@
       Twilio.Device.ready(resolve);
     });
 
+    Twilio.Device.offline((conn) => {
+      console.log('offline');
+    });
+
+    Twilio.Device.error((err) => {
+      console.log('error', err);
+    });
+
     Twilio.Device.connect((conn) => {
       console.log('connect');
       dispatchEvent(new CustomEvent("phone-connect"));

@@ -6,7 +6,7 @@ var db = require('../../db');
 var router = express.Router();
 
 router.get("/caps.js", authUtil.ensureAuthenticated, function(req, res) {
-  console.log('CAPS', req.origin);
+  console.log('CAPS', req.headers.origin);
   res.type('js');
   if (req.user.twilio_account_sid && req.user.twilio_auth_token && req.user.twilio_phone_number) {
     var client = twilio(req.user.twilio_account_sid, req.user.twilio_auth_token);
