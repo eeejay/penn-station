@@ -8,7 +8,7 @@ router.get('/', function(req, res, next) {
     if (req.user.twilio_account_sid &&
         req.user.twilio_auth_token &&
         req.user.twilio_phone_number) {
-      res.render('home', { title: 'My Phone' });
+      res.render('home', { title: 'Home' });
     } else {
       res.redirect('/settings');
     }

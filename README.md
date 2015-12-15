@@ -1,7 +1,7 @@
-My Phone
-========
+Penn Station
+============
 
-This is the very creatively named **My Phone**. The objective of this project is to create a seamless web experience for phone calls and SMS with both mobile and desktop in mind. It is inspired by Firefox OS's communications suite. Hopefully it will run on it soon.
+The objective of this project is to create a seamless web experience for phone calls and SMS with both mobile and desktop in mind. It is inspired by Firefox OS's communications suite. Hopefully it will run on it soon.
 
 Hacking
 -------
