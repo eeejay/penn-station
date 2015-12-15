@@ -46,6 +46,7 @@ Roadmap
 The goal of this project is to have a communications suite that runs everywhere. Well. Right now it is just a pile of stuff I put together to make a demo. There is a long way to go for this to be a Serious application. Here are some things that need to happen in no particular order:
 
  - **Testing**. We need that. Maybe some Travis integration.
+ - Make it perty and usable.
  - No more server-side rendering of pages or JS. Clear separation of frontend and backend. The Jade templates kind of grew on me, but we may need to kiss them goodbye in favor of static HTML.
  - Caching assets (html, css, fonts, js) via service workers.
  - Re-doing messages database schema. The entire message should be stored, not just thread id, and read/unread.
