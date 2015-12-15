@@ -8,14 +8,6 @@ self.addEventListener('activate', function(event) {
   event.waitUntil(self.clients.claim());
 });
 
-self.addEventListener('fetch', function(event) {
-  if (event.request.url.indexOf('foo') > -1) {
-    event.respondWith(new Response('HI, LOSER!!'));
-  } else {
-    event.respondWith(fetch(event.request));
-  }
-});
-
 self.addEventListener('push', (e) => {
   postToAllClients(e);
 });
