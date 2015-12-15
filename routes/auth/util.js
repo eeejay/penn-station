@@ -1,6 +1,7 @@
 var db = require('../../db');
 
-exports.getOrCreateUser = function (profile) {
+exports.getOrCreateUser = function (email, avatar) {
+  var profile = { email: email, avatar: avatar };
   return new Promise(function(resolve, reject) {
     //check if username is already assigned in our database
     db.hgetall('user:' + profile.email, (err, result) => {
@@ -18,7 +19,6 @@ exports.getOrCreateUser = function (profile) {
 };
 
 exports.ensureAuthenticated = function(req, res, next) {
-  console.log('ensureAuthenticated!!', req.user);
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/auth/login');
 }

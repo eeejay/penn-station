@@ -13,7 +13,7 @@ passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
 
-if (process.env.FXA_AUTH) {
+if (process.env.FXA_CLIENT_ID && process.env.FXA_CLIENT_SECRET) {
   var FxaStrategy = require('./passport-fxa');
 
   passport.use(new FxaStrategy({
@@ -24,21 +24,43 @@ if (process.env.FXA_AUTH) {
     },
     function(accessToken, refreshToken, profile, done) {
       console.log(profile);
-      authUtil.getOrCreateUser(profile).then((user) => {
+      authUtil.getOrCreateUser(profile.email, profile.avatar).then((user) => {
         done(null, user);
       });
     }
   ));
 
-  router.get('/login', passport.authenticate('fxa'), function(req, res) {
+  router.get('/fxa-login', passport.authenticate('fxa'), function(req, res) {
     res.redirect('/');
   });
 
-  router.get('/callback',
+  router.get('/fxa-callback',
     passport.authenticate('fxa', { failureRedirect: 'login'}),
     function(req, res) { res.redirect('/');
   });
 
+} if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
+  var GitHubStrategy = require('passport-github2');
+  var app = require('../../app');
+
+  passport.use(new GitHubStrategy({
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET
+  },
+  function(accessToken, refreshToken, profile, done) {
+    authUtil.getOrCreateUser(profile.emails[0].value, profile.avatar_url).then(user => {
+      done(null, user);
+    });
+  }));
+
+  router.get('/github-login', passport.authenticate('github', { scope: [ 'user:email' ] }), function(req, res) {
+    res.redirect('/');
+  });
+
+  router.get('/github-callback',
+    passport.authenticate('github', { failureRedirect: 'login'}),
+    function(req, res) { res.redirect('/');
+  });
 } else {
   var login = require('./passport-login');
   strategy = 'local-login';
@@ -56,7 +78,6 @@ if (process.env.FXA_AUTH) {
   });
 
   router.get('/login', function(req, res, next) {
-    console.log(res.locals.notice);
     res.render('login', { title: 'Sign In', action: 'login' });
   });
 
@@ -79,7 +100,7 @@ router.use(function(req, res, next){
 
 router.get('/logout', function(req, res){
   req.logout();
-  res.redirect('login');
+  res.redirect('/');
 });
 
 module.exports = router;

@@ -3,10 +3,19 @@ var router = express.Router();
 var authUtil = require('./auth/util');
 var db = require('../db');
 
-router.get('/',  authUtil.ensureAuthenticated,
-  function(req, res, next) {
-    res.render('home', { title: 'My Phone' });
-  });
+router.get('/', function(req, res, next) {
+  if (req.isAuthenticated()) {
+    if (req.user.twilio_account_sid &&
+        req.user.twilio_auth_token &&
+        req.user.twilio_phone_number) {
+      res.render('home', { title: 'My Phone' });
+    } else {
+      res.redirect('/settings');
+    }
+  } else {
+    res.render('welcome');
+  }
+});
 
 router.get('/messages', authUtil.ensureAuthenticated, function(req, res, next) {
   res.render('messages', { title: 'Messages' });
@@ -47,11 +56,7 @@ router.post('/settings', authUtil.ensureAuthenticated,
     req.session.passport.user.twilio_auth_token = req.body.auth_token;
     req.session.passport.user.twilio_phone_number = req.body.phone_number;
 
-    res.render('settings', {
-      title: 'Twilio Settings',
-      account_sid: req.body.account_sid,
-      auth_token: req.body.auth_token,
-      phone_number: req.body.phone_number });
+    res.redirect('/');
   });
 
 router.post('/push-endpoint', authUtil.ensureAuthenticated,
