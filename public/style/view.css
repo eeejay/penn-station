@@ -1,0 +1,10 @@
+html {
+  font-size: 10px;
+}
+
+body.gaia-view {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
