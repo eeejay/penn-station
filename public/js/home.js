@@ -1,3 +1,7 @@
+/* globals bridge, BroadcastChannel */
+
+'use strict';
+
 (function() {
   if (document.location.hash.length > 1) {
     document.body.dataset.tab = document.location.hash.substr(1);

@@ -1,27 +1,26 @@
-var express = require('express');
-var session = require('express-session');
-var passport = require('passport');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var cookieSession = require('cookie-session');
-var bodyParser = require('body-parser');
+'use strict';
 
-var twilio = require('./routes/twilio');
+let express = require('express');
+let passport = require('passport');
+let path = require('path');
+let favicon = require('serve-favicon');
+let logger = require('morgan');
+let cookieParser = require('cookie-parser');
+let cookieSession = require('cookie-session');
+let bodyParser = require('body-parser');
 
-var app = express();
+let app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-// uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico'), 'favicon.ico'));
-app.use(favicon(path.join(__dirname, 'public', 'favicon-16x16.png'), 'favicon-16x16.png'));
-app.use(favicon(path.join(__dirname, 'public', 'favicon-32x32.png'), 'favicon-32x32.png'));
-app.use(favicon(path.join(__dirname, 'public', 'favicon-96x96.png'), 'favicon-96x96.png'));
-app.use(favicon(path.join(__dirname, 'public', 'favicon-192x192.png'), 'favicon-192x192.png'));
+for (let size of ['16', '32', '96', '192']) {
+  let fn = 'favicon-' + size + 'x' + size + '.png';
+  app.use(favicon(path.join(__dirname, 'public', fn), fn));
+}
+
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -43,7 +42,7 @@ app.use('/dialer', require('./routes/dialer'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
+  let err = new Error('Not Found');
   err.status = 404;
   next(err);
 });

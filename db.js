@@ -13,7 +13,8 @@ if (process.env.REDIS_URL) {
     if (cb) {
       cb();
     }
-  }
+  };
+
   client.hmset = (key, dict, cb) => {
     client.get(key, (err, result) => {
       if (!result) {
@@ -26,17 +27,19 @@ if (process.env.REDIS_URL) {
       }
     });
   };
+
   client.sadd = (key, item, cb) => {
     client.get(key, (err, result) => {
       if (!result) {
         client.put(key, [item], cb);
       } else {
         var s = new Set(result);
-        s.add(item)
+        s.add(item);
         client.put(key, Array.from(s), cb);
       }
     });
   };
+
   client.srem = (key, item, cb) => {
     client.get(key, (err, result) => {
       if (result) {

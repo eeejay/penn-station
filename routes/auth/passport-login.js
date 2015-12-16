@@ -1,20 +1,23 @@
-var util = require('util');
-var db = require('../../db');
-var bcrypt = require('bcryptjs');
-LocalStrategy = require('passport-local').Strategy;
+'use strict';
+
+let util = require('util');
+let db = require('../../db');
+let bcrypt = require('bcryptjs');
+let LocalStrategy = require('passport-local')
+  .Strategy;
 
 function LocalLogin() {
-  LocalStrategy.call(this, { passReqToCallback : true }, (req, username, password, done) => {
+  LocalStrategy.call(this, {
+    passReqToCallback: true
+  }, (req, username, password, done) => {
     db.get('user:' + username, (err, result) => {
       if (!result || !bcrypt.compareSync(password, result.password)) {
-        console.log("fail", result, bcrypt.compareSync(password, result.password));
         req.session.notice = {
           type: 'error',
           message: 'Could not log user in. Please try again.'
         };
         done(null, null);
       } else {
-        console.log('success?', result);
         done(null, result);
       }
     });
@@ -26,11 +29,13 @@ function LocalLogin() {
 util.inherits(LocalLogin, LocalStrategy);
 
 function LocalRegister() {
-  LocalStrategy.call(this, { passReqToCallback : true }, (req, username, password, done) => {
-    var user = {
+  LocalStrategy.call(this, {
+    passReqToCallback: true
+  }, (req, username, password, done) => {
+    let user = {
       email: username,
       password: bcrypt.hashSync(password, 8),
-      avatar: "http://cdn-www.dailypuppy.com/media/dogs/anonymous/sparky_lhasa.jpg_w450.jpg"
+      avatar: ''
     };
     db.hgetall('user:' + username, (err, result) => {
       if (result) {

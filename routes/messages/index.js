@@ -1,90 +1,109 @@
-var express = require('express');
-var twilio = require('twilio');
-var webPush = require('web-push');
-var authUtil = require('../auth/util');
-var db = require('../../db');
+'use strict';
 
-var router = express.Router();
+let express = require('express');
+let twilio = require('twilio');
+let webPush = require('web-push');
+let authUtil = require('../auth/util');
+let db = require('../../db');
 
-router.get('/',  authUtil.ensureAuthenticated, function(req, res, next) {
+let router = express.Router();
+
+router.get('/', authUtil.ensureAuthenticated, function (req, res, next) {
   res.render('messages');
 });
 
-router.post('/mark-read', authUtil.ensureAuthenticated, function(req, res) {
-  Promise.all(req.body.map(markMessageRead)).then(() => {
-    console.log('done bird');
-    res.json({status: 'ok'});
-  });
+router.post('/mark-read', authUtil.ensureAuthenticated, function (req, res) {
+  Promise.all(req.body.map(markMessageRead))
+    .then(() => {
+      res.json({
+        status: 'ok'
+      });
+    });
 });
 
-router.post('/send', authUtil.ensureAuthenticated, function(req, res) {
-  var client = twilio(req.user.twilio_account_sid, req.user.twilio_auth_token);
+router.post('/send', authUtil.ensureAuthenticated, function (req, res) {
+  let client = twilio(req.user.twilio_account_sid, req.user.twilio_auth_token);
   client.messages.create({
-    to: req.body.to,
-    from: req.user.twilio_phone_number,
-    body: req.body.body }).then(msg => {
-      var message = { thread_id: req.body.thread_id || msg.sid, unread: false };
-      console.log("GOING TO TOUCH!", req.user.email, req.body.to, message.thread_id);
-      touchThread(req.user.email, req.body.to, message.thread_id).then(() => {
-        console.log("TOUCHED!");
-        db.hmset('twilio-message:' + msg.sid, message, (err, result) => {
-          for (var field in msg) {
-            message[field] = msg[field];
-          }
-          message.direction = 'outbound';
-          console.log("SETT!", message);
-          res.json(message);
+      to: req.body.to,
+      from: req.user.twilio_phone_number,
+      body: req.body.body
+    })
+    .then(msg => {
+      let message = {
+        thread_id: req.body.thread_id || msg.sid,
+        unread: false
+      };
+      touchThread(req.user.email, req.body.to, message.thread_id)
+        .then(() => {
+          db.hmset('twilio-message:' + msg.sid, message, (err, result) => {
+            for (let field in msg) {
+              message[field] = msg[field];
+            }
+            message.direction = 'outbound';
+            res.json(message);
+          });
         });
-      });
     });
-  });
-
-router.get('/list', authUtil.ensureAuthenticated, function(req, res) {
-  var client = twilio(req.user.twilio_account_sid, req.user.twilio_auth_token);
-  console.log("getting, stuff");
-  client.messages.list().then(result => {
-    var phone_number = req.user.twilio_phone_number;
-    // this is hackish. should somehow filter twilio-side
-    var message_list = result.messages.filter(
-      m => m.to === phone_number || m.from === phone_number);
-    Promise.all(message_list.map(augmentMessage)).then(messages => {
-      res.json(messages.filter(m => !!m).sort(reverseDateMessageSort));
-    }).catch(err => {
-      console.log("got an error, yo", err);
-      res.status(500);
-      res.json({status: 'error', message: err.message});
-    });
-  });
 });
 
-router.all('/callback-twiml', function(req, res, next) {
-  console.log("eh?");
-  var outgoing = req.path.endsWith('-status');
-  var contact = outgoing ? req.body.To : req.body.From;
-  var phone_number = outgoing ? req.body.From : req.body.To;
-
-  getUserFromNumber(phone_number).then(user => {
-    console.log("got user from phone number", phone_number, user);
-    getOrCreateThread(user, contact, req.body.MessageSid).then(thread_id => {
-      console.log("got thread", thread_id);
-      var key = 'twilio-message:' + req.body.MessageSid;
-      var msg = { unread: !outgoing, thread_id: thread_id };
-      db.hmset(key, msg, () => {
-        msg.sid = req.body.MessageSid;
-        msg.to = req.body.To;
-        msg.from = req.body.From;
-        msg.body = req.body.Body;
-        msg.direction = outgoing ? 'outbound' : 'inbound';
-        msg.date_created = (new Date()).toISOString();
-        msg.thread_id = thread_id;
-        pushToEndpoints(user, { scope: '/messages', data: msg }).then(() => {
-          var twiml = new twilio.TwimlResponse();
-          res.type('xml');
-          res.send(twiml.toString());
+router.get('/list', authUtil.ensureAuthenticated, function (req, res) {
+  let client = twilio(req.user.twilio_account_sid, req.user.twilio_auth_token);
+  client.messages.list()
+    .then(result => {
+      let phone_number = req.user.twilio_phone_number;
+      // this is hackish. should somehow filter twilio-side
+      let message_list = result.messages.filter(
+        m => m.to === phone_number || m.from === phone_number);
+      Promise.all(message_list.map(augmentMessage))
+        .then(messages => {
+          res.json(messages.filter(m => !!m)
+            .sort(reverseDateMessageSort));
+        })
+        .catch(err => {
+          res.status(500);
+          res.json({
+            status: 'error',
+            message: err.message
+          });
         });
-      });
     });
-  });
+});
+
+router.all('/callback-twiml', function (req, res, next) {
+  let outgoing = req.path.endsWith('-status');
+  let contact = outgoing ? req.body.To : req.body.From;
+  let phone_number = outgoing ? req.body.From : req.body.To;
+
+  getUserFromNumber(phone_number)
+    .then(user => {
+      getOrCreateThread(user, contact, req.body.MessageSid)
+        .then(thread_id => {
+          let key = 'twilio-message:' + req.body.MessageSid;
+          let msg = {
+            unread: !outgoing,
+            thread_id: thread_id
+          };
+          db.hmset(key, msg, () => {
+            msg.sid = req.body.MessageSid;
+            msg.to = req.body.To;
+            msg.from = req.body.From;
+            msg.body = req.body.Body;
+            msg.direction = outgoing ? 'outbound' : 'inbound';
+            msg.date_created = (new Date())
+              .toISOString();
+            msg.thread_id = thread_id;
+            pushToEndpoints(user, {
+                scope: '/messages',
+                data: msg
+              })
+              .then(() => {
+                let twiml = new twilio.TwimlResponse();
+                res.type('xml');
+                res.send(twiml.toString());
+              });
+          });
+        });
+    });
 });
 
 function reverseDateMessageSort(a, b) {
@@ -95,15 +114,15 @@ function augmentMessage(message) {
   return new Promise((resolve, reject) => {
     db.hgetall('twilio-message:' + message.sid, (err, result) => {
       if (result) {
-        console.log('message', message.sid, result.unread);
-        for (k in message) {
+        for (let k in message) {
           result[k] = message[k];
         }
-        result.direction = result.direction == 'inbound' ? 'inbound' : 'outbound';
+        result.direction =
+          result.direction == 'inbound' ? 'inbound' : 'outbound';
         resolve(result);
       } else {
         resolve(null);
-        //reject(err || { message: "Probably not found" });
+        //reject(err || { message: 'Probably not found' });
       }
     });
   });
@@ -111,18 +130,18 @@ function augmentMessage(message) {
 
 function markMessageRead(message) {
   return new Promise((resolve, reject) => {
-    console.log('setting read', message);
-    db.hmset('twilio-message:' + message, { unread: false }, resolve);
+    db.hmset('twilio-message:' + message, {
+      unread: false
+    }, resolve);
   });
 }
 
 
 function touchThread(user, contact, thread_id) {
-  var key = 'thread:' + user + ':' + contact;
+  let key = 'thread:' + user + ':' + contact;
   return new Promise((resolve, reject) => {
     db.set(key, thread_id, () => {
-      db.expire(key, 60*60*4, () => {
-        console.log('made a new thread', key);
+      db.expire(key, 60 * 60 * 4, () => {
         resolve(thread_id);
       });
     });
@@ -143,32 +162,36 @@ function getUserFromNumber(phone_number) {
 
 function pushToEndpoints(user, payload) {
   return new Promise((resolve, reject) => {
-    db.smembers('endpoint:' + user, function(err, pairs) {
+    db.smembers('endpoint:' + user, function (err, pairs) {
       if (!pairs) {
         resolve();
         return;
       }
-      var endpoints = pairs.map(e => e.split('?').map(decodeURIComponent));
+      let endpoints = pairs.map(e => e.split('?')
+        .map(decodeURIComponent));
       Promise.all(
-        endpoints.map(e => webPush.sendNotification(e[0], 400, e[1], JSON.stringify(payload)))).then(resolve);
+          endpoints.map(
+            e =>
+            webPush.sendNotification(e[0], 400, e[1], JSON.stringify(
+              payload))))
+        .then(resolve);
     });
   });
 }
 
 function getOrCreateThread(user, contact, sid) {
-  var key = 'thread:' + user + ':' + contact;
-  console.log('getOrCreateThread', key);
+  let key = 'thread:' + user + ':' + contact;
   return new Promise((resolve, reject) => {
     db.get(key, (err, result) => {
       if (result) {
-        db.expire(key, 60*60*4, () => {
-          console.log('got an existing thread', key);
+        db.expire(key, 60 * 60 * 4, () => {
           resolve(result);
         });
       } else {
-        touchThread(user, contact, sid).then(() => {
-          resolve(sid);
-        });
+        touchThread(user, contact, sid)
+          .then(() => {
+            resolve(sid);
+          });
       }
     });
   });

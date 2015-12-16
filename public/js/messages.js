@@ -1,6 +1,8 @@
+/* globals bridge, BroadcastChannel, phoneUtils, smsNotificationSound */
+
 'use strict';
 
-(function() {
+(function () {
   var threadsModel = [];
   var threadsMap = new Map();
 
@@ -14,9 +16,12 @@
 
   function formatTime(date) {
     var d = new Date(date);
-    d.setMinutes(d.getMinutes() + Math.round(d.getSeconds()/60));
+    d.setMinutes(d.getMinutes() + Math.round(d.getSeconds() / 60));
     d.setSeconds(0);
-    return d.toLocaleTimeString(navigator.language, {hour: '2-digit', minute: '2-digit'});
+    return d.toLocaleTimeString(navigator.language, {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   }
 
   function resetConvoView() {
@@ -33,32 +38,33 @@
   function markThreadAsRead(thread) {
     if (thread.status == 'read') return;
     var messages = thread.messages.map(m => m.sid);
-    console.log(messages);
     var data = new FormData();
-    data.append( "application/json", JSON.stringify( { messages: messages } ) );
+    data.append('application/json', JSON.stringify({
+      messages: messages
+    }));
     for (var e in data.entries()) {
-      console.log(e);
     }
-    console.log(data);
-    fetch("/messages/mark-read", {
-      method: "POST",
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(messages)
-    }).then(() => {
-      thread.status = 'read';
-      // Horrible shortcut, should really change model
-      var elem = document.querySelector('#threads-list li > a[data-thread="' + thread.thread_id + '"]');
-      elem.parentNode.classList.remove('unread');
-      elem.parentNode.classList.add('read');
-    });
+    fetch('/messages/mark-read', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(messages)
+      })
+      .then(() => {
+        thread.status = 'read';
+        // Horrible shortcut, should really change model
+        var elem = document.querySelector(
+          '#threads-list li > a[data-thread=\'' + thread.thread_id + '\']');
+        elem.parentNode.classList.remove('unread');
+        elem.parentNode.classList.add('read');
+      });
   }
 
   threadsList.configure({
-    getSectionName: function(item) {
+    getSectionName: function (item) {
       return item.day;
     }
   });
@@ -68,10 +74,12 @@
     var messageDate = new Date(message.date_created);
     var day = messageDate.toLocaleDateString();
     var unread =
-      typeof(message.unread) == 'string' ? (message.unread == 'true') : message.unread;
+      typeof (message.unread) == 'string' ? (message.unread == 'true') :
+      message.unread;
     if (thread) {
       thread.messages[latestMessage ? 'push' : 'unshift'](message);
-      thread.status = thread.status == 'read' &&  unread ? 'unread' : thread.status;
+      thread.status =
+        thread.status == 'read' && unread ? 'unread' : thread.status;
       if (latestMessage) {
         thread.last_message_body = message.body;
         thread.last_message_time = formatTime(messageDate);
@@ -114,9 +122,14 @@
     return li;
   }
 
-  fetch('/messages/list', { credentials: 'include' }).then(
-    response => response.json()).then(messages => {
-      var today = (new Date(Date.now())).toLocaleDateString();
+  fetch('/messages/list', {
+      credentials: 'include'
+    })
+    .then(
+      response => response.json())
+    .then(messages => {
+      var today = (new Date(Date.now()))
+        .toLocaleDateString();
       for (var message of messages) {
         addMessageToThreads(message, today);
       }
@@ -129,10 +142,11 @@
     }
   });
 
-  convoView.querySelector('.onecolumn gaia-header').addEventListener('action', () => {
-    convoView.classList.remove('active');
-    inboxView.classList.add('active');
-  });
+  convoView.querySelector('.onecolumn gaia-header')
+    .addEventListener('action', () => {
+      convoView.classList.remove('active');
+      inboxView.classList.add('active');
+    });
 
   var dialer = bridge.client('dialer', new BroadcastChannel('ps-channel'));
 
@@ -143,16 +157,18 @@
     }
   }
 
-  for (var callbutton of document.querySelectorAll('a[data-icon="call"]')) {
+  for (var callbutton of document.querySelectorAll('a[data-icon=\'call\']')) {
     callbutton.addEventListener('click', callContact);
   }
 
-  document.querySelector('a[data-icon="compose"]').addEventListener('click', () => {
-    resetConvoView();
-    convoView.querySelector('gaia-header h1').textContent = "New Message";
-    convoView.classList.add('active');
-    inboxView.classList.remove('active');
-  });
+  document.querySelector('a[data-icon=\'compose\']')
+    .addEventListener('click', () => {
+      resetConvoView();
+      convoView.querySelector('gaia-header h1')
+        .textContent = 'New Message';
+      convoView.classList.add('active');
+      inboxView.classList.remove('active');
+    });
 
   convoView.addEventListener('input', () => {
     convoButton.disabled = !(convoInput.value &&
@@ -169,7 +185,8 @@
   function setViewToThread(thread) {
     resetConvoView();
     convoView.dataset.threadId = thread.thread_id;
-    convoView.querySelector('gaia-header h1').textContent = thread.contact;
+    convoView.querySelector('gaia-header h1')
+      .textContent = thread.contact;
     markThreadAsRead(thread);
     var lastMessage;
     for (var message of thread.messages) {
@@ -178,13 +195,16 @@
     convoList.parentNode.scrollTop = convoList.parentNode.scrollTopMax;
     convoView.classList.add('active');
     inboxView.classList.remove('active');
-    var elem = document.querySelector('#threads-list li > a[data-thread="' + thread.thread_id + '"]');
+    var elem = document.querySelector('#threads-list li > a[data-thread=\'' +
+      thread.thread_id + '\']');
     elem.parentNode.classList.add('selected');
   }
 
   function sendMessage(msg) {
     var thread = threadsMap.get(convoView.dataset.threadId);
-    var message = { body: convoInput.value };
+    var message = {
+      body: convoInput.value
+    };
     if (!thread) {
       message.to = phoneUtils.formatE164(toInput.value, 'US');
     } else {
@@ -192,64 +212,73 @@
       message.thread_id = thread.thread_id;
     }
     convoInput.value = '';
-    return fetch("/messages/send", {
-      method: "POST",
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(message)
-    }).then(response => response.json()).then(msg => {
-      messageHandler(msg).then(newThread => {
-        if (!thread) {
-          setViewToThread(newThread);
-        }
-        convoList.scrollIntoView({ behavior: "smooth", block: "end"});
-        smsNotificationSound.outgoing();
+    return fetch('/messages/send', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(message)
+      })
+      .then(response => response.json())
+      .then(msg => {
+        messageHandler(msg)
+          .then(newThread => {
+            if (!thread) {
+              setViewToThread(newThread);
+            }
+            convoList.scrollIntoView({
+              behavior: 'smooth',
+              block: 'end'
+            });
+            smsNotificationSound.outgoing();
+          });
       });
-    });
   }
 
   function messageHandler(msg) {
-    var today = (new Date(Date.now())).toLocaleDateString();
+    var today = (new Date(Date.now()))
+      .toLocaleDateString();
     var thread = addMessageToThreads(msg, today, true);
     var p = threadsList.setModel(threadsModel);
     if (convoView.classList.contains('active') &&
-        convoView.dataset.threadId == thread.thread_id) {
+      convoView.dataset.threadId == thread.thread_id) {
       addMessageToConversation(msg);
       requestAnimationFrame(() => {
-        convoList.scrollIntoView({ behavior: "smooth", block: "end"});
+        convoList.scrollIntoView({
+          behavior: 'smooth',
+          block: 'end'
+        });
       });
       markThreadAsRead(thread);
     }
 
     return p.then(() => thread);
   }
-
-  console.log('registering..');
-  navigator.serviceWorker.register('/sw.js').then(registration => {
-    console.log('registered, yo', registration);
-    navigator.serviceWorker.addEventListener('message', (e) => {
-      messageHandler(e.data.data).then(() => {
-        smsNotificationSound.incoming();
+  navigator.serviceWorker.register('/sw.js')
+    .then(registration => {
+      navigator.serviceWorker.addEventListener('message', (e) => {
+        messageHandler(e.data.data)
+          .then(() => {
+            smsNotificationSound.incoming();
+          });
       });
+      return subscribeOrResubscribePush(registration);
+    })
+    .catch(e => {
     });
-    return subscribeOrResubscribePush(registration);
-  }).catch(e => {
-    console.log('failed?', e);
-  });
 
   function updateEndpoint(sub, remove) {
-    console.log("updateEndpoint..", sub);
     var key = sub.getKey('p256dh');
     var payload = {
       url: sub.endpoint,
       remove: remove || false,
-      key: btoa(String.fromCharCode.apply(null, new Uint8Array(key)))};
+      key: btoa(String.fromCharCode.apply(null, new Uint8Array(key)))
+    };
 
-    return fetch("/push-endpoint", {
-      method: "POST",
+    return fetch('/push-endpoint', {
+      method: 'POST',
       credentials: 'include',
       headers: {
         'Accept': 'application/json',
@@ -260,25 +289,25 @@
   }
 
   function subscribeOrResubscribePush(registration) {
-    console.log('push manager?', registration.pushManager);
-    return registration.pushManager.getSubscription().then(subscription => {
-      if (subscription) {
-        console.log('we already have a subscription...', subscription);
-        return updateEndpoint(subscription, true).then(() => {
-          return subscription.unsubscribe().then(() => {
-            return registration.pushManager.subscribe().then((sub) => {
-              console.log('subscribed.', sub);
+    return registration.pushManager.getSubscription()
+      .then(subscription => {
+        if (subscription) {
+          return updateEndpoint(subscription, true)
+            .then(() => {
+              return subscription.unsubscribe()
+                .then(() => {
+                  return registration.pushManager.subscribe()
+                    .then((sub) => {
+                      return updateEndpoint(sub);
+                    });
+                });
+            });
+        } else {
+          return registration.pushManager.subscribe()
+            .then((sub) => {
               return updateEndpoint(sub);
             });
-          });
-        });
-      } else {
-        console.log('subscribing..');
-        return registration.pushManager.subscribe().then((sub) => {
-          console.log('subscribed.', sub);
-          return updateEndpoint(sub);
-        });
-      }
-    });
+        }
+      });
   }
 })();

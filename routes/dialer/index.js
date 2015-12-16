@@ -1,9 +1,11 @@
-var express = require('express');
-var authUtil = require('../auth/util');
+'use strict';
 
-var router = express.Router();
+let express = require('express');
+let authUtil = require('../auth/util');
 
-router.get('/',  authUtil.ensureAuthenticated, function(req, res, next) {
+let router = express.Router();
+
+router.get('/', authUtil.ensureAuthenticated, function (req, res, next) {
   res.render('dialer');
 });
 

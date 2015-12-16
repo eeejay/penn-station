@@ -1,10 +1,12 @@
-self.addEventListener('install', function(event) {
-  console.log('install');
+/* globals clients */
+
+'use strict';
+
+self.addEventListener('install', function (event) {
   event.waitUntil(self.skipWaiting());
 });
 
-self.addEventListener('activate', function(event) {
-  console.log('activate');
+self.addEventListener('activate', function (event) {
   event.waitUntil(self.clients.claim());
 });
 
@@ -12,42 +14,45 @@ self.addEventListener('push', (e) => {
   postToAllClients(e);
 });
 
-self.addEventListener('notificationclick', function(event) {
+self.addEventListener('notificationclick', function (event) {
   event.notification.close();
 
-  event.waitUntil(clients.matchAll({ type: "window" }).then(function(clientList) {
-    for (var i = 0; i < clientList.length; i++) {
-      var client = clientList[i];
-      if (client.url == '/' && 'focus' in client)
-        return client.focus();
-    }
-    if (clients.openWindow)
-      return clients.openWindow('/');
-  }));
+  event.waitUntil(clients.matchAll({
+      type: 'window'
+    })
+    .then(function (clientList) {
+      for (var i = 0; i < clientList.length; i++) {
+        var client = clientList[i];
+        if (client.url == '/' && 'focus' in client)
+          return client.focus();
+      }
+      if (clients.openWindow)
+        return clients.openWindow('/');
+    }));
 });
 
 function postToAllClients(event) {
-  console.log('postToAllClients!!');
   var data = event.data ? event.data.json() : {};
-  event.waitUntil(clients.matchAll({type: "window"}).then(function(c) {
-    var needNotification = true;
-    for (var cl of c) {
-      var url = new URL(cl.url);
-      console.log('client', cl.url, cl.visibilityState, cl.focused);
-      if (url.pathname == data.scope) {
-        console.log('posted!!');
-        cl.postMessage(data);
-        needNotification = cl.visibilityState !== 'visible';
-        break;
+  event.waitUntil(clients.matchAll({
+      type: 'window'
+    })
+    .then(function (c) {
+      var needNotification = true;
+      for (var cl of c) {
+        var url = new URL(cl.url);
+        if (url.pathname == data.scope) {
+          cl.postMessage(data);
+          needNotification = cl.visibilityState !== 'visible';
+          break;
+        }
       }
-    }
 
-    if (needNotification) {
-      console.log('nothing active, so I am going to send a notificaiton.', data);
-      return self.registration.showNotification(data.data.from, {
-        body: data.data.body,
-        icon: '/resources/sms.png'
-      });
-    }
-  }));
+      if (needNotification) {
+          data);
+        return self.registration.showNotification(data.data.from, {
+          body: data.data.body,
+          icon: '/resources/sms.png'
+        });
+      }
+    }));
 }
