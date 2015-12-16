@@ -134,7 +134,7 @@
     inboxView.classList.add('active');
   });
 
-  var dialer = bridge.client('dialer', new BroadcastChannel('dialer-channel'));
+  var dialer = bridge.client('dialer', new BroadcastChannel('ps-channel'));
 
   function callContact() {
     var thread = threadsMap.get(convoView.dataset.threadId);

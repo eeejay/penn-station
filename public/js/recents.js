@@ -39,7 +39,7 @@
       recentsList.setModel(recentsModel);
     });
 
-    var dialer = bridge.client('dialer', new BroadcastChannel('dialer-channel'));
+    var dialer = bridge.client('dialer', new BroadcastChannel('ps-channel'));
 
     recentsList.addEventListener('click', e => {
       console.log(e.target);

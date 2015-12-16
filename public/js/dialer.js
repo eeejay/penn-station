@@ -114,9 +114,7 @@
 
   /* Dialer service */
 
-  var dialerChannel = new BroadcastChannel('dialer-channel');
-
-  bridge.service('dialer').listen(dialerChannel).
+  bridge.service('dialer').listen(new BroadcastChannel('ps-channel')).
     method('dial', (number, call) => {
       document.location.hash = '#dialer';
       if (call) {
