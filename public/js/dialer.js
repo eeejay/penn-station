@@ -9,12 +9,6 @@
   var panels = document.getElementById('panels');
   var callStatus = document.querySelector("#call-status h3");
 
-  if (document.location.hash.length > 1) {
-    document.body.dataset.tab = document.location.hash.substr(1);
-  } else {
-    document.body.dataset.tab = 'dialer';
-  }
-
   numberInput.dataset.hasValue = numberInput.value.length != 0;
 
   function sanitizeNumber(number) {
@@ -54,10 +48,6 @@
     } else if (evt.key === 'Backspace') {
       eraseNumber();
     }
-  });
-
-  addEventListener('hashchange', (e) => {
-    document.body.dataset.tab = document.location.hash.substr(1);
   });
 
   callButton.addEventListener('click', () => {

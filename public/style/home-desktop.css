@@ -46,7 +46,7 @@
     left: 0;
   }
 
-  #dialer-container {
+  #dialer > iframe {
     height: 435px;
     width: 320px;
     position: absolute;
@@ -62,7 +62,7 @@
     border-radius: 1rem 1rem 0 0;
   }
 
-  body[data-tab="dialer"] #dialer #dialer-container {
+  body[data-tab="dialer"] #dialer > iframe {
     visibility: visible;
     transform: translateY(0);
   }

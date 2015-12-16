@@ -39,6 +39,7 @@ app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
 app.use('/twilio', require('./routes/twilio'));
 app.use('/messages', require('./routes/messages'));
+app.use('/dialer', require('./routes/dialer'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

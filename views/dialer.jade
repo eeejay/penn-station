@@ -1,0 +1,71 @@
+extends gaia
+
+append head
+  script(type='text/javascript' src='/bower/libphonenumber/dist/libphonenumber.js')
+  script(type='text/javascript' src='/bower/dtmf/dist/dtmf.min.js')
+
+  script(type='text/javascript' src='//static.twilio.com/libs/twiliojs/1.2/twilio.min.js')
+  script(type='text/javascript' src='/twilio/caps.js')
+  script(type='text/javascript' src='/js/telephony.js')
+  link(rel='stylesheet', href='/style/dialer.css')
+
+block content
+  #top
+    #call-info
+      h1 Incoming
+      h2
+    #number-display
+      input#number(type='text', readonly='readonly', data-value='')
+      button#erase(aria-label='Delete', data-icon="clear-input", data-l10n-id="ignore")
+  #midsection
+    #call-status
+      h3 Incoming..
+    #keypad
+      .keypad-row
+        .key(role='key', data-value='1')
+          span 1
+        .key(role='key', data-value='2')
+          span 2
+          em abc
+        .key(role='key', data-value='3')
+          span 3
+          em def
+      .keypad-row
+        .key(role='key', data-value='4')
+          span 4
+          em ghi
+        .key(role='key', data-value='5')
+          span 5
+          em jkl
+        .key(role='key', data-value='6')
+          span 6
+          em mno
+      .keypad-row
+        .key(role='key', data-value='7')
+          span 7
+          em pqrs
+        .key(role='key', data-value='8')
+          span 8
+          em tuv
+        .key(role='key', data-value='9')
+          span 9
+          em wxyz
+      .keypad-row
+        .key(role='key', data-value='*')
+          span *
+          em ’
+        .key(role='key', data-value='0')
+          span 0
+          em +
+        .key(role='key', data-value='#')
+          span #
+  #callbar.buttonbar
+    button#mute.show-incall.small(aria-label='Mute', data-icon="mute", data-l10n-id="mute")
+    button#call.show-nocall(aria-label='Call', data-icon="call", data-l10n-id="ignore")
+    button#reject.show-inbound(aria-label='Reject', data-icon="call-hang-up", data-l10n-id="ignore")
+    button#hangup.show-incall(aria-label='Hang up', data-icon="call-hang-up", data-l10n-id="ignore")
+    button#accept.show-inbound(aria-label='Accept', data-icon="call", data-l10n-id="ignore")
+    button#show-dialpad.show-incall.small(aria-label='Show dialpad', data-icon="dialpad", data-l10n-id="show-dialpad")
+
+block tailend
+  script(type='text/javascript' src='/js/dialer.js')
