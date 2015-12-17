@@ -3,8 +3,7 @@
 'use strict';
 
 (function () {
-  var numberInput = document.querySelector('input#number');
-  var eraseButton = document.getElementById('erase');
+  var numberInput = document.querySelector('ps-dialer-input');
   var callButton = document.getElementById('call');
   var keypad = document.getElementById('keypad');
   var acceptButton = document.getElementById('accept');
@@ -12,46 +11,26 @@
   var hangupButton = document.getElementById('hangup');
   var callStatus = document.querySelector('#call-status h3');
 
-  numberInput.dataset.hasValue = numberInput.value.length !== 0;
-
-  function sanitizeNumber(number) {
-    return number;
-  }
-
-  function insertNumber(val, replace = false) {
-    if (replace) {
-      numberInput.value = sanitizeNumber(val);
-    } else {
-      var id = DTMF.play(val);
-      setTimeout(() => {
-        DTMF.stop(id);
-      }, 200);
-      numberInput.value = sanitizeNumber(numberInput.value + val);
-    }
-
-    numberInput.dataset.hasValue = numberInput.value.length !== 0;
-  }
-
-  function eraseNumber() {
-    var val = numberInput.value;
-    numberInput.value = val.substr(0, val.length - 1);
-    numberInput.dataset.hasValue = numberInput.value.length !== 0;
-  }
-
   keypad.addEventListener('click', (evt) => {
     if (evt.target.dataset.value) {
-      insertNumber(evt.target.dataset.value);
+      numberInput.value += evt.target.dataset.value;
     }
   });
 
-  eraseButton.addEventListener('click', eraseNumber);
+  numberInput.displayFunction = value => {
+    return window.utilsClient.method('formatForDisplay', value);
+  };
 
-  numberInput.addEventListener('keypress', (evt) => {
-    if (/[\#\*\d]/.test(evt.key)) {
-      evt.preventDefault();
-      insertNumber(evt.key);
-    } else if (evt.key === 'Backspace') {
-      eraseNumber();
+  numberInput.addEventListener('change', evt => {
+    if (evt.detail.newValue.startsWith(evt.detail.oldValue)) {
+      let added = evt.detail.newValue.substr(evt.detail.oldValue.length);
+      if (added.length === 1) {
+        /* Only play tone for single digits */
+        let dtmfId = DTMF.play(added);
+        setTimeout(() => {
+          DTMF.stop(dtmfId);
+        }, 200);
+      }
     }
   });
 

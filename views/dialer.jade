@@ -3,6 +3,7 @@ extends view
 append head
   script(type='text/javascript' src='/bower/libphonenumber/dist/libphonenumber.js')
   script(type='text/javascript' src='/bower/dtmf/dist/dtmf.min.js')
+  script(type='text/javascript' src='/js/elements/ps-dialer-input.js')
 
   script(type='text/javascript' src='//static.twilio.com/libs/twiliojs/1.2/twilio.min.js')
   script(type='text/javascript' src='/twilio/caps.js')
@@ -14,9 +15,7 @@ block content
     #call-info
       h1 Incoming
       h2
-    #number-display
-      input#number(type='text', readonly='readonly', data-value='')
-      button#erase(aria-label='Delete', data-icon="clear-input", data-l10n-id="ignore")
+    ps-dialer-input
   #midsection
     #call-status
       h3 Incoming..

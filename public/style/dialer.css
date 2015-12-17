@@ -17,13 +17,7 @@
   display: none;
 }
 
-#number-display {
-  padding: 0;
-  display: flex;
-  background-color: #27c8c2;
-}
-
-.incall #number-display {
+.incall ps-dialer-input {
   display: none;
 }
 
@@ -49,37 +43,6 @@ h2 {
 }
 
 h3 {
-}
-
-#number-display #number {
-  flex-grow: 2;
-  min-width: 0;
-  font-size: 4rem;
-  background-color: #27c8c2;
-  border: none;
-  margin-left: 12px;
-  color: #fff;
-}
-
-button#erase {
-  display: flex;
-  width: 10rem;
-  font-size: 4rem;
-  color: rgba(255, 255, 255, 0.75);
-  background-color: transparent;
-  border: none;
-  visibility: hidden;
-  padding: 0;
-  justify-content: center;
-  align-items: center;
-}
-
-button#erase::before {
-  font-size: 4rem;
-}
-
-input#number[data-has-value='true'] + button#erase {
-  visibility: visible;
 }
 
 #midsection {
