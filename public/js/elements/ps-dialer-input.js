@@ -83,7 +83,7 @@ proto.createdCallback = function() {
       this.eraseDigit();
       evt.preventDefault();
     }
-  });
+  }, false);
 };
 
 proto.attachedCallback = function() {

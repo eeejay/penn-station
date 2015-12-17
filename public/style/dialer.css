@@ -56,23 +56,14 @@ h3 {
   left: 0;
 }
 
-#keypad {
+ps-dialer-keypad {
+  width: calc(100% - 2.4rem);
   margin: 0 1.2rem;
-  display: flex;
-  width: calc(100% - 24px);
-  table-layout: fixed;
   height: 100%;
-  flex-direction: column;
-  align-content: stretch;
 }
 
-body.incall #keypad {
+body.incall ps-dialer-keypad {
   display: none;
-}
-
-.keypad-row {
-  display: flex;
-  height: 100%;
 }
 
 #call-status {
@@ -108,29 +99,6 @@ body.incall #keypad {
 
 body.incall #call-status {
   display: flex;
-}
-
-.key {
-  width: 100%;
-  margin: 0.25rem 0;
-}
-
-.key > span {
-  font-size: 5rem;
-  font-family: serif;
-  pointer-events: none;
-  margin-left: 2.5rem;
-  line-height: normal;
-}
-
-.key > em {
-  font-weight: 300;
-  font-size: 1.5rem;
-  color: #038282;
-  font-style: normal;
-  width: 4.5rem;
-  text-transform: uppercase;
-  pointer-events: none;
 }
 
 .buttonbar {

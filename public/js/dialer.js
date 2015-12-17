@@ -1,38 +1,34 @@
-/* globals DTMF, telephone, bridge , BroadcastChannel*/
+/* globals telephone, bridge , BroadcastChannel*/
 
 'use strict';
 
 (function () {
   var numberInput = document.querySelector('ps-dialer-input');
   var callButton = document.getElementById('call');
-  var keypad = document.getElementById('keypad');
+  var keypad = document.querySelector('ps-dialer-keypad');
   var acceptButton = document.getElementById('accept');
   var rejectButton = document.getElementById('reject');
   var hangupButton = document.getElementById('hangup');
   var callStatus = document.querySelector('#call-status h3');
 
-  keypad.addEventListener('click', (evt) => {
-    if (evt.target.dataset.value) {
-      numberInput.value += evt.target.dataset.value;
-    }
+  keypad.addEventListener('dialed', (evt) => {
+    numberInput.value += evt.detail;
   });
 
   numberInput.displayFunction = value => {
     return window.utilsClient.method('formatForDisplay', value);
   };
 
-  numberInput.addEventListener('change', evt => {
-    if (evt.detail.newValue.startsWith(evt.detail.oldValue)) {
-      let added = evt.detail.newValue.substr(evt.detail.oldValue.length);
-      if (added.length === 1) {
-        /* Only play tone for single digits */
-        let dtmfId = DTMF.play(added);
-        setTimeout(() => {
-          DTMF.stop(dtmfId);
-        }, 200);
-      }
+  addEventListener('keypress', (evt) => {
+    if (keypad.press(evt.key)) {
+      evt.stopPropagation();
+      evt.preventDefault();
+    } else if (evt.key === 'Backspace') {
+      numberInput.eraseDigit();
+      evt.stopPropagation();
+      evt.preventDefault();
     }
-  });
+  }, true);
 
   callButton.addEventListener('click', () => {
     telephone.call(numberInput.value);
