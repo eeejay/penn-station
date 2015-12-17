@@ -6,9 +6,8 @@ let authUtil = require('../auth/util');
 
 let router = express.Router();
 
-router.get('/caps.js', authUtil.ensureAuthenticated, function (req, res) {
+router.get('/info', authUtil.ensureAuthenticated, function (req, res) {
   let origin = req.protocol + '://' + req.get('host');
-  res.type('js');
   if (req.user.twilio_account_sid &&
     req.user.twilio_auth_token &&
     req.user.twilio_phone_number) {
@@ -27,15 +26,12 @@ router.get('/caps.js', authUtil.ensureAuthenticated, function (req, res) {
                 capability.allowClientOutgoing(app.sid);
                 capability.allowClientIncoming('webclient');
                 let token = capability.generate();
-                res.send(
-                  'TWILIO_TOKEN = \'' + token + '\';\n' +
-                  'TWILIO_NUMBER = \'' + number_details.phone_number +
-                  '\';\n');
-              }, err => res.send('/* Twilio error: ' + err + ' */\n'));
-          }, err => res.send('/* Twilio error: ' + err + ' */\n'));
-      }, err => res.send('/* Twilio error: ' + err + ' */\n'));
+                res.json({ token: token, number: number_details.phone_number});
+              }, err => res.json({ error: err }));
+          }, err =>  res.json({ error: err }));
+      }, err =>  res.json({ error: err }));
   } else {
-    res.send('/* Twilio not configured */\n');
+    res.json({ error: 'not configured' });
   }
 });
 

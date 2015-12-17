@@ -1,4 +1,4 @@
-/* globals bridge, BroadcastChannel, phoneUtils, smsNotificationSound */
+/* globals bridge, BroadcastChannel, smsNotificationSound */
 
 'use strict';
 
@@ -13,6 +13,9 @@
   var convoInput = document.querySelector('.compose input');
   var convoButton = document.querySelector('.compose button');
   var toInput = document.querySelector('.to input');
+
+  var psChannel = new BroadcastChannel('ps-channel');
+  var dialerClient = bridge.client('dialer', psChannel);
 
   function formatTime(date) {
     var d = new Date(date);
@@ -42,8 +45,6 @@
     data.append('application/json', JSON.stringify({
       messages: messages
     }));
-    for (var e in data.entries()) {
-    }
     fetch('/messages/mark-read', {
         method: 'POST',
         credentials: 'include',
@@ -148,12 +149,10 @@
       inboxView.classList.add('active');
     });
 
-  var dialer = bridge.client('dialer', new BroadcastChannel('ps-channel'));
-
   function callContact() {
     var thread = threadsMap.get(convoView.dataset.threadId);
     if (thread) {
-      dialer.method('dial', thread.contact, true);
+      dialerClient.method('dial', thread.contact, true);
     }
   }
 
@@ -202,38 +201,44 @@
 
   function sendMessage(msg) {
     var thread = threadsMap.get(convoView.dataset.threadId);
+    let formatPromise;
     var message = {
       body: convoInput.value
     };
+    convoInput.value = '';
+
     if (!thread) {
-      message.to = phoneUtils.formatE164(toInput.value, 'US');
+      formatPromise = window.utilsClient.method('formatE164', toInput.value);
     } else {
-      message.to = thread.contact;
+      formatPromise = Promise.resolve(thread.contact);
       message.thread_id = thread.thread_id;
     }
-    convoInput.value = '';
-    return fetch('/messages/send', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(message)
-      })
-      .then(response => response.json())
-      .then(msg => {
-        messageHandler(msg)
-          .then(newThread => {
-            if (!thread) {
-              setViewToThread(newThread);
-            }
-            convoList.scrollIntoView({
-              behavior: 'smooth',
-              block: 'end'
+
+    return formatPromise.then(formattedNumber => {
+      message.to = formattedNumber;
+      return fetch('/messages/send', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(message)
+        })
+        .then(response => response.json())
+        .then(msg => {
+          messageHandler(msg)
+            .then(newThread => {
+              if (!thread) {
+                setViewToThread(newThread);
+              }
+              convoList.scrollIntoView({
+                behavior: 'smooth',
+                block: 'end'
+              });
+              smsNotificationSound.outgoing();
             });
-            smsNotificationSound.outgoing();
-          });
+        });
       });
   }
 

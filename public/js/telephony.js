@@ -1,10 +1,14 @@
-/* globals Twilio, TWILIO_NUMBER, TWILIO_TOKEN, phoneUtils */
+/* globals Twilio */
 
 'use strict';
 
 (function () {
   function WebPhone() {
-    Twilio.Device.setup(TWILIO_TOKEN);
+    window.utilsClient.method('getTwilioInfo')
+    .then(info => {
+      this.info = info;
+      Twilio.Device.setup(info.token);
+    });
     this.ready = new Promise((resolve, reject) => {
       Twilio.Device.ready(resolve);
     });
@@ -35,17 +39,20 @@
 
   WebPhone.prototype = {
     call: function (number) {
-      var formatedNumber = phoneUtils.formatE164(
-        number, phoneUtils.getRegionCodeForNumber(TWILIO_NUMBER));
-      window.dispatchEvent(new CustomEvent('phone-outbound', {
-        detail: {
-          contact: formatedNumber
-        }
-      }));
-      Twilio.Device.connect({
-        number: formatedNumber,
-        callerId: TWILIO_NUMBER
-      });
+      this.ready.then(() => {
+        window.utilsClient.method('formatE164', number)
+          .then(formatted_number => {
+            window.dispatchEvent(new CustomEvent('phone-outbound', {
+              detail: {
+                contact: formatted_number
+              }
+            }));
+            Twilio.Device.connect({
+              number: formatted_number,
+              callerId: this.info.number
+            });
+          });
+        });
     },
 
     hangup: function () {

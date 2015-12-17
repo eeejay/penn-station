@@ -124,15 +124,14 @@
 
   bridge.service('dialer')
     .listen(new BroadcastChannel('ps-channel'))
-    .
-  method('dial', (number, call) => {
-    document.location.hash = '#dialer';
-    if (call) {
-      telephone.call(number);
-      numberInput.value = '';
-    } else {
-      numberInput.value = number;
-      numberInput.dataset.hasValue = numberInput.value.length !== 0;
-    }
-  });
+    .method('dial', (number, call) => {
+      document.location.hash = '#dialer';
+      if (call) {
+        telephone.call(number);
+        numberInput.value = '';
+      } else {
+        numberInput.value = number;
+        numberInput.dataset.hasValue = numberInput.value.length !== 0;
+      }
+    });
 })();

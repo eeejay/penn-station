@@ -48,7 +48,6 @@ function postToAllClients(event) {
       }
 
       if (needNotification) {
-          data);
         return self.registration.showNotification(data.data.from, {
           body: data.data.body,
           icon: '/resources/sms.png'
