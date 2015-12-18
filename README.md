@@ -38,7 +38,7 @@ We have two db backends, LevelDB and Redis. I made a polyfill for LevelDb so it 
 
 ### Tunneling
 
-This app relies heavily on public URLs. Twilio uses web hooks for incoming calls and texts. Testing this app through localhost will not work. There is some smarts that reconfigures your Twilio number and makes sure that it is synchronized with your tunnel URL. We have two tunneling choices, just because we can: **ngrok** and **localtunnel**.  Set either `NGROK` or `LOCALTUNNEL` to your favorite subdomain.
+This app relies heavily on public URLs. Twilio uses web hooks for incoming calls and texts. Testing this app through localhost will not work. There is some smarts that reconfigures your Twilio number and makes sure that it is synchronized with your tunnel URL. We have two tunneling choices, just because we can: **ngrok** and **localtunnel**.  Set `ROOT_URL` to either an `ngrok.io` url (eg. `https://foo.ngrok.io`) or a `localtunnel.me` one (eg. `https://foo.localtunnel.me`).
 
 Roadmap
 -------
